@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import iteration1.models.Role;
 import iteration1.models.User;
@@ -38,7 +39,7 @@ public class UserRepository {
 	}
 	
 	public static void addUser(Connection conn, User user) throws SQLException {
-		String query = "INSERT INTO USERS (username, salt, password, email, role_id) VALUES(?, ?, ?, ?, ?)";
+		String query = "INSERT INTO USERS (username, salt, password, email, role_id,approvedToReview) VALUES(?, ?, ?, ?, ?, ?)";
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, user.getUsername());
 		stmt.setBytes(2, user.getSalt());
@@ -49,5 +50,18 @@ public class UserRepository {
 		stmt.close();
 	}
 	
+	public static ArrayList<User> listReviewers(Connection conn) throws SQLException{
+		String query = "SELECT username FROM USERS WHERE role_id = 2";
+		PreparedStatement stmt = conn.prepareStatement(query);
+		ResultSet results = stmt.executeQuery();
+		ArrayList<User> reviewerList = null;
+		while (results.next()) {
+			String name = results.getString(0);
+			reviewerList.add(selectByUsername(conn,name));
+		}
+		
+		return reviewerList;
+		
+	}
 }
 

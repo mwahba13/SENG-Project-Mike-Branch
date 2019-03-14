@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -35,7 +36,7 @@ public class AdminMenu extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AdminMenu() {
+	public AdminMenu()  {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -44,6 +45,22 @@ public class AdminMenu extends JFrame {
 		contentPane.setLayout(null);
 		lblNewLabel.setBounds(106, 96, 264, 105);
 		contentPane.add(lblNewLabel);
+		
+		
+		JButton btnMngReviewer = new JButton ("Manage Reviewers");
+		btnMngReviewer.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				contentPane.setVisible(false);
+				dispose();
+				ManageReviewers mngReviewer = new ManageReviewers();
+				mngReviewer.setVisible(true);
+				
+				
+			}
+			
+		});
 		
 		JButton btnLogOut = new JButton("Log Out");
 		btnLogOut.addActionListener(new ActionListener() {
