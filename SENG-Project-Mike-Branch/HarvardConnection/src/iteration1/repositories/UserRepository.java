@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
+import javax.swing.ListModel;
+
 import iteration1.models.Role;
 import iteration1.models.User;
 
@@ -50,19 +53,19 @@ public class UserRepository {
 		stmt.close();
 	}
 	
-	public static ArrayList<User> listReviewers(Connection conn) throws SQLException{
+	public static DefaultListModel<User> listReviewers(Connection conn) throws SQLException{
 		String query = "SELECT * FROM USERS WHERE role_id = ?";
 		PreparedStatement stmt = conn.prepareStatement(query);
 		
 		
 		ResultSet results = stmt.executeQuery();
-		ArrayList<User> reviewerList = null;
+		DefaultListModel<User> reviewerList = null;
 		
 		
 		while (results.next()) {
 			String name = results.getString("username");
 			System.out.println(name);
-			reviewerList.add(selectByUsername(conn,name));
+			reviewerList.addElement(selectByUsername(conn,name));
 		}
 		stmt.close();
 		results.close();
