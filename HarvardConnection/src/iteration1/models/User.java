@@ -10,7 +10,7 @@ public class User {
 	private String lastLogin;
 	private String email;
 	private Role role;
-	private boolean approvedToReview;
+	private boolean reviewerApproval;
 	
 	public User() {
 		this.username = null;
@@ -28,7 +28,14 @@ public class User {
 		this.lastLogin = lastLogin;
 		this.email = email;
 		this.role = role;
-		this.approvedToReview = reviewerApproval;
+		this.reviewerApproval = reviewerApproval;
+	}
+	
+	//Constructor used for creating User objects for purpose of testing "ManageReviewers" class
+	public User(String username,Role role,boolean reviewerApproval) {
+		this.username = username;
+		this.role = role;
+		this.reviewerApproval = reviewerApproval;
 	}
 	
 	public String getUsername() {
@@ -84,10 +91,10 @@ public class User {
 	}
 	
 	public void setApprovedToReview (boolean approval) {
-		this.approvedToReview = approval;
+		this.reviewerApproval = approval;
 	}
 	public boolean getApprovedToReview () {
-		return this.approvedToReview;
+		return this.reviewerApproval;
 	}
 	
 }
