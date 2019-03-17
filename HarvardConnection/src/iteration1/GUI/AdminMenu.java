@@ -47,6 +47,8 @@ public class AdminMenu extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		
+		
+		
 		JButton btnMngReviewer = new JButton ("Manage Reviewers");
 		btnMngReviewer.addActionListener(new ActionListener() {
 
@@ -60,7 +62,11 @@ public class AdminMenu extends JFrame {
 				
 			}
 			
+			
+			
 		});
+		btnMngReviewer.setBounds(50,200,200,25);
+		contentPane.add(btnMngReviewer);
 		
 		JButton btnLogOut = new JButton("Log Out");
 		btnLogOut.addActionListener(new ActionListener() {

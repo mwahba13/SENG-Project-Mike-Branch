@@ -68,14 +68,20 @@ public class ManageReviewers extends JFrame {
 		User tempUser2 = new User("Billy Jacking",reviewer,false);
 		User tempUser3 = new User("Johnny Two-Nose",reviewer,false);
 		User tempUser4 = new User("Jimmy Page",reviewer,true);
+		
+		ArrayList<User> userDB = new ArrayList<User>();
+		userDB.add(tempUser1);
+		userDB.add(tempUser2);
+		userDB.add(tempUser3);
+		userDB.add(tempUser4);
 		//
 		
 		
-		DefaultListModel<User> listModel = new DefaultListModel();
-		listModel.addElement(tempUser1);
-		listModel.addElement(tempUser2);
-		listModel.addElement(tempUser3);
-		listModel.addElement(tempUser4);
+		DefaultListModel<String> listModel = new DefaultListModel();
+		listModel.addElement(tempUser1.getUsername());
+		listModel.addElement(tempUser2.getUsername());
+		listModel.addElement(tempUser3.getUsername());
+		listModel.addElement(tempUser4.getUsername());
 		//
 
 		JList<User> reviewerList = new JList(listModel);
@@ -87,26 +93,44 @@ public class ManageReviewers extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()==false) {
-					System.out.print(reviewerList.getSelectedIndex());
+					reviewerList.getSelectedIndex();
+					String selectedUserName = getUserFromIndex(listModel,reviewerList.getSelectedIndex());
+					User selectedUser = userLookupFromString(selectedUserName,userDB);
+					AuthorizeReviewers authorizeReviewer = new AuthorizeReviewers();
+					authorizeReviewer.setUser(selectedUser);
+					authorizeReviewer.drawWindow();
+					contentPane.setVisible(false);
+					dispose();
 					
-					
+					authorizeReviewer.setVisible(true);
 				}
+				
 			}
 			
 		});
 		
-		JLabel approvalStatus = new JLabel("Test");
-		approvalStatus.setBounds(300,0,100,50);
-		contentPane.add(approvalStatus);
 		
-		JLabel approvalTag = new JLabel("Approval:");
-		approvalTag.setBounds(225, 0, 100, 50);
-		contentPane.add(approvalTag);
-			
 		
 		
 		
 	}
+	
+	private String getUserFromIndex(DefaultListModel<String> list, int index) {
+		return list.get(index);
+		
+		
+	}
+	
+	private User userLookupFromString(String name,ArrayList<User> DB) {
+		for (int i = 0; i < DB.size();i++) {
+			if (name.equals(DB.get(i).getUsername())) {
+				return DB.get(i);
+			}
+			
+		}
+		return null;
+	}
+	
 	
 	
 	

@@ -20,6 +20,18 @@ public class User {
 		this.email = null;
 		this.role = null;
 	}
+	
+	
+	public User(String username, byte[] salt, byte[] password, String lastLogin, String email, Role role) {
+		this.username = username;
+		this.salt = salt;
+		this.password = password;
+		this.lastLogin = lastLogin;
+		this.email = email;
+		this.role = role;
+		
+	}
+	
 		
 	public User(String username, byte[] salt, byte[] password, String lastLogin, String email, Role role,boolean reviewerApproval) {
 		this.username = username;
@@ -95,6 +107,14 @@ public class User {
 	}
 	public boolean getApprovedToReview () {
 		return this.reviewerApproval;
+	}
+	
+	public void switchApproval() {
+		if (this.reviewerApproval) {
+			this.setApprovedToReview(false);
+		}else {
+			this.setApprovedToReview(true);
+		}
 	}
 	
 }
