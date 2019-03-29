@@ -1,39 +1,35 @@
 package iteration1.GUI;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import iteration1.controllers.UserController;
-
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Button;
+import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JRadioButton;
+
 import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import java.awt.Color;
+import javax.swing.border.EmptyBorder;
+
+import iteration1.controllers.UserController;
 
 public class SignUp extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField inputtedUserName;
-	private JTextField inputtedPassword;
 	private JTextField inputtedEmail;
+	private JTextField inputtedPassword;
+	private JTextField inputtedFirstName;
+	private JTextField inputtedLastName;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	public int selectedRole;
 
@@ -67,43 +63,53 @@ public class SignUp extends JFrame {
 		
 		
 		
-		inputtedUserName = new JTextField();			// TextField for UserName input
-		inputtedUserName.setBounds(12, 39, 114, 19);
-		contentPane.add(inputtedUserName);
-		inputtedUserName.setColumns(10);
-		
-		
-		
-		inputtedPassword = new JTextField();			// TextField for Password input
-		inputtedPassword.setBounds(12, 95, 114, 19);
-		contentPane.add(inputtedPassword);
-		inputtedPassword.setColumns(10);
-		
-		
-		
-		inputtedEmail = new JTextField();				// TextField for Email input
-		inputtedEmail.setBounds(12, 156, 114, 19);
+		inputtedEmail = new JTextField();			// TextField for UserName input
+		inputtedEmail.setBounds(12, 40, 114, 19);
 		contentPane.add(inputtedEmail);
 		inputtedEmail.setColumns(10);
 		
 		
 		
-		JLabel lblUsername = new JLabel("Username");	// Label above UserName TextField
-		lblUsername.setBounds(12, 23, 103, 15);
-		contentPane.add(lblUsername);
+		inputtedPassword = new JPasswordField();			// TextField for Password input
+		inputtedPassword.setBounds(12, 100, 114, 19);
+		contentPane.add(inputtedPassword);
+		inputtedPassword.setColumns(10);
+		
+		
+		
+		inputtedFirstName = new JTextField();				// TextField for Email input
+		inputtedFirstName.setBounds(12, 160, 114, 19);
+		contentPane.add(inputtedFirstName);
+		inputtedFirstName.setColumns(10);
+		
+		
+		
+		inputtedLastName = new JTextField();
+		inputtedLastName.setBounds (12, 220, 114, 19);
+		contentPane.add(inputtedLastName);
+		inputtedLastName.setColumns(10);
+		
+		
+		
+		JLabel lblEmail = new JLabel("Email");	// Label above UserName TextField
+		lblEmail.setBounds(12, 25, 70, 15);
+		contentPane.add(lblEmail);
 		
 		
 		
 		JLabel lblPassword = new JLabel("Password");	// Label above Password TextField
-		lblPassword.setBounds(12, 80, 70, 15);
+		lblPassword.setBounds(12, 85, 70, 15);
 		contentPane.add(lblPassword);
 		
 		
 		
-		JLabel lblEmail = new JLabel("Email");		// Label above email TextBoxField
-		lblEmail.setBounds(12, 139, 70, 15);
-		contentPane.add(lblEmail);
+		JLabel lblFirstName = new JLabel("Full Name");		// Label above email TextBoxField
+		lblFirstName.setBounds(12, 145, 70, 15); 
+		contentPane.add(lblFirstName);
 		
+		JLabel lblLastName = new JLabel("Last Name");
+		lblLastName.setBounds(12, 205, 90, 15);
+		contentPane.add(lblLastName);
 		
 		
 		JRadioButton rdbtnAuthor = new JRadioButton("Author");		// JRadioButton Author Option
@@ -155,7 +161,7 @@ public class SignUp extends JFrame {
 				}
 				
 				if ((!rdbtnAuthor.isSelected() && !rdbtnReviewer.isSelected()) 										// If neither roles are chosen or User name/password contains spaces
-						|| inputtedUserName.getText().contains(" ") || inputtedUserName.getText().isEmpty()			// Error message is then displayed
+						|| inputtedEmail.getText().contains(" ") || inputtedEmail.getText().isEmpty()			// Error message is then displayed
 						|| inputtedPassword.getText().contains(" ") || inputtedPassword.getText().isEmpty()){
 					
 					txtpnMessageDisplay.setText("Please enter a valid username/password.\nMake sure you've selected to be an author or reviewer.\nCannot have an empty field. No spaces are allowed.");	// error message
@@ -169,9 +175,8 @@ public class SignUp extends JFrame {
 					return;
 				}
 				
-				
 				try {
-					UserController.registerWindowVersion(inputtedUserName.getText(), inputtedPassword.getText(), inputtedEmail.getText(), selectedRole);				// Register method in UserController class
+					UserController.register(inputtedEmail.getText(), inputtedFirstName.getText(), inputtedLastName.getText(), inputtedPassword.getText(), selectedRole);				// Register method in UserController class
 				} catch (NoSuchAlgorithmException | InvalidKeySpecException | SQLException | IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

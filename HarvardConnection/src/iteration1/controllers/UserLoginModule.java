@@ -17,7 +17,6 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import iteration1.forms.Menu;
 import iteration1.models.User;
 import iteration1.repositories.SQLiteConnection;
 import iteration1.repositories.UserRepository;
@@ -55,6 +54,10 @@ public class UserLoginModule implements LoginModule {
 		if (callbackHandler == null) {
 			throw new LoginException("Hmm... Something's not quite right.\nError: no CallbackHandler available...");
 		}
+	
+		// we're only using validate() right now but when I put UserLogin back together I'm going to need this
+		
+		/*
 		
 		Callback[] callbacks = null; 
 		
@@ -92,6 +95,7 @@ public class UserLoginModule implements LoginModule {
 				throw new FailedLoginException(e.getMessage());
 			}
 		}
+		*/
 		
 		return success;	
 	}
@@ -102,7 +106,7 @@ public class UserLoginModule implements LoginModule {
 		
 		try {
 			
-			User user = UserRepository.selectByUsername(conn.getConn(), username);		// Login selected by Username
+			User user = UserRepository.getUserByEmail(conn.getConn(), username);		// Login selected by Username
 			
 			System.out.println("selectByUsername");
 			
@@ -113,7 +117,7 @@ public class UserLoginModule implements LoginModule {
 			passMatch = PBKDF2.decrypt(user.getPassword(), password.toCharArray(), user.getSalt());
 			
 			if (passMatch) {
-				UserRepository.updateLastLoginByUsername(conn.getConn(), username);
+				UserRepository.updateLastLoginByEmail(conn.getConn(), username);
 			}
 			
 			conn.getConn().close();			

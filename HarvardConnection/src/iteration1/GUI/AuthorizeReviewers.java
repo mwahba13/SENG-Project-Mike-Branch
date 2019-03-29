@@ -3,6 +3,7 @@ package iteration1.GUI;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,10 +13,14 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import iteration1.models.User;
+import iteration1.repositories.SQLiteConnection;
+import iteration1.repositories.UserRepository;
 
 public class AuthorizeReviewers extends JFrame{
 
 	private User user;
+	private String username;
+	private Integer roleid;
 	private JPanel contentPane;
 	
 	
@@ -52,14 +57,16 @@ public class AuthorizeReviewers extends JFrame{
 		contentPane.setLayout(null);
 		
 		
-		JLabel userName = new JLabel("User: "+this.user.getUsername());
+		JLabel userName = new JLabel("Reviewer: " + this.username);
 		userName.setBounds(150,50,300,100);
 		contentPane.add(userName);
 		
-		
-		JLabel approval = new JLabel(approvedToReview(this.user));
-		approval.setBounds(75,75,400,100);
+		JLabel approval = new JLabel ("Approval Status: " + approvedToReview(this.roleid));
+		approval.setBounds(150,100,400,100);
 		contentPane.add(approval);
+		
+		
+		
 		
 		JButton btnGoBack = new JButton("Go Back");
 		btnGoBack.addActionListener(new ActionListener() {
@@ -76,13 +83,12 @@ public class AuthorizeReviewers extends JFrame{
 		btnGoBack.setBounds(50,200,100,25);
 		contentPane.add(btnGoBack);
 		
-		
 		JButton btnSwitchApproval = new JButton ("Change Approval Status");
 		btnSwitchApproval.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				switchApprovalStatus();
+				updateRoleIDInDatabase();
 				contentPane.setVisible(false);
 				dispose();
 				ManageReviewers mngReviewer = new ManageReviewers();
@@ -94,7 +100,7 @@ public class AuthorizeReviewers extends JFrame{
 			
 		});
 		btnSwitchApproval.setBounds(175,200,225,25);
-		//contentPane.add(btnSwitchApproval);
+		contentPane.add(btnSwitchApproval);
 		
 		
 		
@@ -102,27 +108,35 @@ public class AuthorizeReviewers extends JFrame{
 		
 	}
 	
-	public void setUser(User newUser) {
-		this.user = newUser;
+	public void setRoleID(Integer ID) {
+		this.roleid = ID;
 		
 	}
 	
-	private String approvedToReview(User user){
-		if (user.getApprovedToReview()) {
-			return ("This User Can Currently Review Papers");
+	private void updateRoleIDInDatabase() {
+		SQLiteConnection conn = new SQLiteConnection();
+		try {
+			UserRepository.updateUserStatusByName(conn.getConn(), this.username, this.roleid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setUsername(String Username) {
+		this.username = Username;
+	}
+	
+	private String approvedToReview(Integer roleid){
+		if (roleid == 1) {
+			return ("Authorized");
 		}
 		else {
-			return ("This User Is Not Currently Authorized To Review Papers");
+			return ("Unauthorized");
 		}
 	}
 	
-	private void switchApprovalStatus() {
-		System.out.println("preswitch" + this.user.getApprovedToReview());
-		this.user.switchApproval();
-		System.out.println("postswitch" + this.user.getApprovedToReview());
-
-		
-	}
+	
 	
 	
 	

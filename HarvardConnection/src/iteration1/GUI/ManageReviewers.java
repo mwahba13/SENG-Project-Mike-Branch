@@ -1,5 +1,7 @@
 package iteration1.GUI;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -51,69 +53,81 @@ public class ManageReviewers extends JFrame {
 		contentPane.setLayout(null);
 		
 		
-		/*SQLiteConnection conn = new SQLiteConnection();
-		System.out.println(conn.getUrl());
+		SQLiteConnection conn = new SQLiteConnection();
+		
 		try {
-			ArrayList<User> ReviewerList = UserRepository.listReviewers(conn.getConn());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		//fake users for testing purposes
-		Role reviewer = new Role(2);
-		Role admin = new Role(1);
+			ArrayList<User> reviewerArray = UserRepository.getUnapprovedUsers(conn.getConn());
+			DefaultListModel<String> reviewerList = new DefaultListModel();
 
-		User tempUser1 = new User("Randolph Hearst III",reviewer,true);
-		User tempUser2 = new User("Billy Jacking",reviewer,false);
-		User tempUser3 = new User("Johnny Two-Nose",reviewer,false);
-		User tempUser4 = new User("Jimmy Page",reviewer,true);
-		
-		ArrayList<User> userDB = new ArrayList<User>();
-		userDB.add(tempUser1);
-		userDB.add(tempUser2);
-		userDB.add(tempUser3);
-		userDB.add(tempUser4);
-		//
-		
-		
-		DefaultListModel<String> listModel = new DefaultListModel();
-		listModel.addElement(tempUser1.getUsername());
-		listModel.addElement(tempUser2.getUsername());
-		listModel.addElement(tempUser3.getUsername());
-		listModel.addElement(tempUser4.getUsername());
-		//
-
-		JList<User> reviewerList = new JList(listModel);
-		reviewerList.setBounds(0, 0, 225 ,300);
-		contentPane.add(reviewerList);
-		
-		reviewerList.addListSelectionListener(new ListSelectionListener() {
-		
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting()==false) {
-					reviewerList.getSelectedIndex();
-					String selectedUserName = getUserFromIndex(listModel,reviewerList.getSelectedIndex());
-					User selectedUser = userLookupFromString(selectedUserName,userDB);
-					AuthorizeReviewers authorizeReviewer = new AuthorizeReviewers();
-					authorizeReviewer.setUser(selectedUser);
-					authorizeReviewer.drawWindow();
-					contentPane.setVisible(false);
-					dispose();
-					
-					authorizeReviewer.setVisible(true);
-				}
+			
+			for (int i = 0; i < reviewerArray.size();i++) {
+				String tempName = (reviewerArray.get(i).getFirstName() + " " + reviewerArray.get(i).getLastName());
+				reviewerList.addElement(tempName);
 				
 			}
 			
-		});
 		
+			JList<User> List = new JList(reviewerList);
+			List.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			List.setLayoutOrientation(JList.VERTICAL);
+			List.setBounds(0,0,225,300);
+			
+
+			contentPane.add(List);
+			
+			List.addListSelectionListener(new ListSelectionListener() {
+
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					if (!e.getValueIsAdjusting()) {
+						int temp = List.getSelectedIndex();
+						String selectedUsername = getUserFromIndex(reviewerList,temp);
+						try {
+							Integer selectedRoleID = UserRepository.getApprovalByName(conn.getConn(), selectedUsername);
+							
+							AuthorizeReviewers authorize = new AuthorizeReviewers();
+							authorize.setUsername(selectedUsername);
+							authorize.setRoleID(selectedRoleID);
+							authorize.drawWindow();
+							contentPane.setVisible(false);
+							dispose();
+							authorize.setVisible(true);
+							
+							
+							
+							
+							
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+					
+					}
+					
+					
+					
+				}
+				
+				
+				
+			});
+
+			
+
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+
+
+				
 		
 		
 		
 		
 	}
+	
 	
 	private String getUserFromIndex(DefaultListModel<String> list, int index) {
 		return list.get(index);
@@ -121,15 +135,6 @@ public class ManageReviewers extends JFrame {
 		
 	}
 	
-	private User userLookupFromString(String name,ArrayList<User> DB) {
-		for (int i = 0; i < DB.size();i++) {
-			if (name.equals(DB.get(i).getUsername())) {
-				return DB.get(i);
-			}
-			
-		}
-		return null;
-	}
 	
 	
 	

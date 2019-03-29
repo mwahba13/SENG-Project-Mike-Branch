@@ -10,7 +10,7 @@ public class SQLiteConnection {
 	
 	public SQLiteConnection() {									// PLEASE NOTE: TWO ""SQLiteConnection"" Methods!!!
 		this.conn = null;										// One takes no URL and defaults to the database we use to store username passwords etc
-		this.url = "jdbc:sqlite:src/harvardConnection.sl3";								// Other one takes a URL as input incase we use two different Databases
+		this.url = "jdbc:sqlite:src/harvardConnection.sl3";		// Other one takes a URL as input incase we use two different Databases
 		
 		try {
 			conn = DriverManager.getConnection(getUrl());
