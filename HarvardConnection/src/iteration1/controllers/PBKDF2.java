@@ -9,6 +9,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+// Description:
+// Class used for de-crypting, encrypting and salting passwords
+
 public class PBKDF2 {
 	public static byte[] encrypt(char[] password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		PBEKeySpec spec = new PBEKeySpec(password, salt, 1000, 128);
