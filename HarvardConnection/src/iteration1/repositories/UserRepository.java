@@ -31,6 +31,21 @@ public class UserRepository {
 		stmt.executeUpdate();
 		stmt.close();
 	}
+	public static void addReviewer(Connection conn, User user) throws SQLException {
+		
+		String query = "INSERT INTO USERS (email, first_name, last_name, salt, password, role_id, interests) VALUES(?, ?, ?, ?, ?, ?,?)";
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setString(1, user.getEmail());
+		stmt.setString(2, user.getFirstName());
+		stmt.setString(3, user.getLastName());
+		stmt.setBytes(4, user.getSalt());
+		stmt.setBytes(5, user.getPassword());
+		stmt.setInt(6, user.getRole().getId());
+		stmt.setString(7, user.getReviewerInterests());
+		stmt.executeUpdate();
+		stmt.close();
+	}
+	
 	
 	public static void deleteUser(Connection conn, String email) throws SQLException {
 		String query = "DELETE FROM USERS WHERE email = ?";
@@ -135,7 +150,12 @@ public class UserRepository {
 	//Assumes there is only one user per name (i.e. no duplicates)
 	public static Integer getApprovalByName (Connection conn, String username) throws SQLException {
 		String[] firstLast = username.split(" ");
+//		System.out.println("firstLast: " + firstLast[2]); // PRINT DEBUG STATEMENT
+		System.out.println("///////AFTER USERNAME SPLIT/////// WE'RE IN USERREPOSITORY. JAVA");  // PRINT DEBUG STATEMENT
+		System.out.println("firstLast [0]: " + firstLast[0]); // PRINT DEBUG STATEMENT
+		System.out.println("firstLast [1]: " + firstLast[1]); // PRINT DEBUG STATEMENT
 		String query = "SELECT * FROM USERS WHERE first_name = ? AND last_name = ?";
+		System.out.println("after query is initialized"); // PRINT DEBUG STATEMENT
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, firstLast[0]);
 		stmt.setString(2, firstLast[1]);
@@ -147,6 +167,26 @@ public class UserRepository {
 		return (value);
 		
 		
+		
+	}
+	
+	//Retrieves reviewers research interests
+	public static String getInterestsByName(Connection conn,String username) throws SQLException{
+		String[] firstLast = username.split(" ");
+		String query = "SELECT * FROM USERS WHERE first_name = ? AND last_name = ?";
+		
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setString(1, firstLast[0]);
+		stmt.setString(2, firstLast[1]);
+		ResultSet result = stmt.executeQuery();
+		String interests = result.getString(10);
+		if (interests == null) {
+			interests = " ";
+		}
+		
+		stmt.close();
+		result.close();
+		return(interests);
 		
 	}
 	

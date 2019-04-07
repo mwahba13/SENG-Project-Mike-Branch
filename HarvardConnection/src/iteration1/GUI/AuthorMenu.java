@@ -14,13 +14,18 @@ import static java.nio.file.StandardCopyOption.*; // Added for copy options i.e.
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import iteration1.repositories.LogInDataContainer;
+
 import javax.swing.JLabel;
 
-public class AuthorMenu extends JFrame {
+public class AuthorMenu extends JInternalFrame {
 
 	private JPanel contentPane;
+	private static AuthorMenu myInstance;		// Instance of Class | Used in having one frame visible at all times
 
 	/**
 	 * Launch the application.
@@ -43,60 +48,105 @@ public class AuthorMenu extends JFrame {
 	 */
 	public AuthorMenu() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 640, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblAuthorMenu = new JLabel("AUTHOR MENU");
+		
+		
+		// Label to show the Authors's Email
+		JLabel lblAuthorMenu = new JLabel(LogInDataContainer.getEmail());
 		lblAuthorMenu.setBounds(10, 25, 179, 104);
 		contentPane.add(lblAuthorMenu);
 		
+		
+		
+		// Logout button: When pressed, user is logged out
 		JButton btnLogOut = new JButton("Log Out");
 		btnLogOut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				contentPane.setVisible(false);
-				dispose();
-				MainMenu main = new MainMenu();
-				main.setVisible(true);
+				
+				 LogIn nw = LogIn.getInstance();		// Creates new Window
+				 nw.pack();								// Causes subcomponents of this JInternalFrameto be laid out at their preferred size.
+				 getDesktopPane().add(nw);				// Adds Instance of frame to DesktopPane on StartingFrame
+				 nw.setVisible(true);					// Sets Instance frame visible
+				 
+				 try {
+				     nw.setMaximum(true);				// Sets window to max size of DesktopPane
+				 } catch (Exception e1) {
+					 System.out.println(e1);
+				 }
+				 
+				 getDesktopPane().repaint();			// Repaints the DesktopPane
+				 getDesktopPane().remove(myInstance);	// Removes the instance of current Class
+				 myInstance = null;						// Sets instance to null
 			}
 		});
 		btnLogOut.setBounds(321, 0, 117, 25);
 		contentPane.add(btnLogOut);
 		
+		
+		
+		// Upload paper button: When clicked, opens AuthorPicReviewer,
+		// and allows the author to choose reviewers they prefer
 		JButton btnUploadPaper = new JButton("Upload Paper");
 		btnUploadPaper.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AuthorPickReviewer pick = new AuthorPickReviewer();
-				pick.setVisible(true);
+//				AuthorPickReviewer pick = new AuthorPickReviewer();
+//				pick.setVisible(true);
+				
+				AuthorPickReviewer nw = AuthorPickReviewer.getInstance();		// Creates new Window
+				nw.pack();								// Causes subcomponents of this JInternalFrameto be laid out at their preferred size.
+				getDesktopPane().add(nw);				// Adds Instance of frame to DesktopPane on StartingFrame
+				nw.setVisible(true);					// Sets Instance frame visible
+				 
+				try {
+				    nw.setMaximum(true);				// Sets window to max size of DesktopPane
+				} catch (Exception e1) {
+					System.out.println(e1);
+				}
+				 
+				getDesktopPane().repaint();				// Repaints the DesktopPane
+				getDesktopPane().remove(myInstance);	// Removes the instance of current Class
+				myInstance = null;						// Sets instance to null
 			}
 		});
 		btnUploadPaper.setBounds(10, 100, 150, 23);
 		contentPane.add(btnUploadPaper);
 		
+		
+		
+		// Download Paper Button: When clicked, the user can choose to download their submitted paper, or reviewed papers
 		JButton btnDownloadReviewedPaper = new JButton("Download Paper");
 		btnDownloadReviewedPaper.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {				// THIS IS WHEN UPLOAD BUTTON IS CLICKED
-		    	System.out.println("working Directory:" + System.getProperty("user.dir"));		// DEBUG PRINT STATEMENT TO SHOW WORKING DIRECTORY
-			    JFileChooser chooser = new JFileChooser();		
+			
+			public void actionPerformed(ActionEvent arg0) {				// When button is clicked
+			    
+				
+		    	JFileChooser chooser = new JFileChooser();
 			    String userFolder;
-			    userFolder = System.getProperty("user.dir")+ "\\SubmittedFiles\\";// J FILE CHOOSER TO CHOOSE FILE TO COPY
-		    	chooser.setCurrentDirectory(new File(userFolder));// SHOWS CURRENT DIRECTORY AFTER OPENING JFILECHOOSER
-			    chooser.setDialogTitle("Download File");				// SETS TITLE OF NEW FILE CHOOSER WINDOW
-			    System.out.println("Directory after JFileChooser" + chooser.getCurrentDirectory() );
+			    userFolder = (System.getProperty("user.dir") + "\\uploads\\" 
+			    				+ LogInDataContainer.getEmail());	// user folder path
+		    	chooser.setCurrentDirectory(new File(userFolder));	// sets the directory
+			    chooser.setDialogTitle("Download File");			// Sets title of JFileChooser
 
-			    int returnVal = chooser.showOpenDialog(null);						// HONESTLY DONT KNOW
-			    if(returnVal == JFileChooser.APPROVE_OPTION) {						// I guess if the file chosen is valid, run through?
+			    
+			    int returnVal = chooser.showOpenDialog(null);
+			    if(returnVal == JFileChooser.APPROVE_OPTION) {		// When file chosen if valid
 
-			       System.out.println("You chose to open this file: " +													// Debug print Statement to show
-			            chooser.getSelectedFile().getName() + "\nThis is the directory:" + chooser.getSelectedFile());	// what file is chosen and its directory
+			    	
+			       System.out.println("You chose to open this file: " +				// Debug print Statement to show
+			    		   chooser.getSelectedFile().getName() + 					// what file is chosen
+			    		   "\nThis is the directory:" + chooser.getSelectedFile());	// and its directory
 			       
-			       System.out.println("THIS IS WHAT I'M COPYING:" + chooser.getSelectedFile().toPath());			// debug print statement to show what i'm copying
 			       
-			       Path copyToDirectory = Paths.get(System.getProperty("user.dir")+ "\\SavedFiles\\" + chooser.getSelectedFile().getName());	// path set up to copy file
+			       String copyToDirectory1 = System.getProperty("user.home") + "\\Downloads\\" + chooser.getSelectedFile().getName();	// Different Copy Directory
+			       Path copyToDirectory = Paths.get(copyToDirectory1); // path set up to copy file
+			       
+			       
 			       try {
-			    	   
 			    	Files.copy(chooser.getSelectedFile().toPath(), copyToDirectory, REPLACE_EXISTING);		// final copy statement. first parameter is file, second is where to copy.
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -105,8 +155,20 @@ public class AuthorMenu extends JFrame {
 			       
 			    }
 			}
+
 		});
 		btnDownloadReviewedPaper.setBounds(200, 100, 150, 23);
 		contentPane.add(btnDownloadReviewedPaper);
+	}
+	
+	
+	/*
+	 * Get Instance Method | Returns Instance of class when called
+	 */
+	public static AuthorMenu getInstance() {	
+	    if (myInstance == null) {			// If instance is null, create new instance
+	        myInstance = new AuthorMenu();		// Set new instance
+	    }
+	    return myInstance;					// Return instance
 	}
 }

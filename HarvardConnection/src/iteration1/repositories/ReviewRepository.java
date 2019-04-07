@@ -7,10 +7,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import iteration1.models.Review;
+import iteration1.models.User;
 
 public class ReviewRepository {
 	
-	// FOR VIEWING REVIEWS THAT ARE RELATED TO A SPECIFIC UPLOAD (I think this is getting used when an admin sees the statuses reviewers have been assigned to a paper)
+	public static void addReviewer(Connection conn, String email, int uploadId) throws SQLException {
+		
+		String query = "INSERT INTO REVIEWS (reviewer, upload_id) VALUES(?, ?)";
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setString(1, email);
+		stmt.setInt(2, uploadId);
+		
+		stmt.executeUpdate();
+		stmt.close();
+	}
+	
+	
+		// FOR VIEWING REVIEWS THAT ARE RELATED TO A SPECIFIC UPLOAD (I think this is getting used when an admin sees the statuses reviewers have been assigned to a paper)
 	public static ArrayList<Review> getReviewsByUploadId(Connection conn, int uploadId) throws SQLException {
 		ArrayList<Review> reviews = new ArrayList<>();
 		

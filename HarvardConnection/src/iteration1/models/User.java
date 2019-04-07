@@ -8,6 +8,7 @@ public class User {
 	private byte[] salt;
 	private byte[] password;
 	private String lastLogin;
+	private String reviewerInterest;
 	private Role role;
 	private Integer approved;
 	private Integer blacklist;
@@ -166,6 +167,13 @@ public class User {
 	}
 	public boolean getApprovedToReview () {
 		return this.reviewerApproval;
+	}
+	
+	public void setReviewerInterests(String interests) {
+		this.reviewerInterest=interests;
+	}
+	public String getReviewerInterests() {
+		return this.reviewerInterest;
 	}
 	
 	

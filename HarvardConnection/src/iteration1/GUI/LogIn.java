@@ -7,8 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -17,18 +20,21 @@ import javax.swing.border.EmptyBorder;
 
 import iteration1.controllers.UserLoginModule;
 import iteration1.models.User;
+import iteration1.repositories.LogInDataContainer;
 import iteration1.repositories.SQLiteConnection;
 import iteration1.repositories.UserRepository;
 
-public class LogIn extends JFrame {
+public class LogIn extends JInternalFrame {
 
 	private JPanel contentPane;
 	private JTextField emailInput;
 	private JTextField passwordInput;
 	private JLabel lblEmail;
 	private JLabel lblPassword;
-	private Button LogIn;
-	private Button Return;
+	private JButton LogIn;
+	private JButton Return;
+	
+	private static LogIn myInstance;		// Used for having only 1 frame open at a time
 	
 	public int selectedRole;
 	
@@ -57,7 +63,7 @@ public class LogIn extends JFrame {
 	 */
 	public LogIn() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 640, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -81,33 +87,43 @@ public class LogIn extends JFrame {
 		lblPassword.setBounds(12, 113, 70, 15);
 		contentPane.add(lblPassword);
 		
-		LogIn = new Button("Log In\n");
 		
-		LogIn.setBounds(180, 228, 86, 23);
-		contentPane.add(LogIn);
-		
-		Return = new Button("Go Back");
+		/**
+		 * Go back button to go to previous window
+		 */
+		Return = new JButton("Go Back");
 		Return.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				contentPane.setVisible(false);
-				dispose(); 						//Closes window after opening
-				MainMenu main = new MainMenu();
-				main.setVisible(true);
+
+				 MainMenu nw = MainMenu.getInstance();		// Creates new Window
+				 nw.pack();									// Causes subcomponents of this JInternalFrameto be laid out at their preferred size.
+				 getDesktopPane().add(nw);					// Adds Instance of frame to DesktopPane on StartingFrame
+				 nw.setVisible(true);						// Sets Instance frame visible
+				 
+				 try {
+				     nw.setMaximum(true);				// Sets window to max size of DesktopPane
+				 } catch (Exception e1) {
+					 System.out.println(e1);
+				 }
+				 
+				 getDesktopPane().repaint();			// Repaints the DesktopPane
+				 getDesktopPane().remove(myInstance);	// Removes the instance of current Class
+				 myInstance = null;						// Sets instance to null
+
 			}
 		});
 		Return.setBounds(338, 10, 86, 23);
 		contentPane.add(Return);
 		
-		JTextPane txtpnMessageDisplay = new JTextPane();
-		txtpnMessageDisplay.setBackground(Color.WHITE);
-		txtpnMessageDisplay.setBounds(291, 113, 116, 118);
-		contentPane.add(txtpnMessageDisplay);
 		
+		
+		
+		LogIn = new JButton("Log In\n");
+		LogIn.setBounds(180, 228, 86, 23);
+		contentPane.add(LogIn);
 		LogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
-				// New Stuff after removing bulletin Role log ins
 				success = login.validate(emailInput.getText(), passwordInput.getText());					// Logs in and checks if account exists (little sloppy)
 				
 				SQLiteConnection conn = new SQLiteConnection();												// Connects to database
@@ -124,29 +140,80 @@ public class LogIn extends JFrame {
 				System.out.println(selectedRole);			// Debug print statement, shows role number
 				
 				if(!success) {					// If login doesn't succeed 
-					txtpnMessageDisplay.setText("Email or Password are incorrect");	// error message
+					JOptionPane.showMessageDialog(contentPane, "Email or Password are incorrect");		// error message
 				}
 				
-				else if(success && selectedRole == 3) {				// If log in succeeds and role number is 3 (aka Reviewer)
-					contentPane.setVisible(false);
-					dispose(); 						//Closes window after opening
-					AuthorMenu author = new AuthorMenu();			// Opens up Author Menu SCreen
-					author.setVisible(true);
+				// Setters for LogInInformationContainer
+				LogInDataContainer.setEmail(emailInput.getText());
+				LogInDataContainer.setRoleID(selectedRole);
+
+				
+				
+				if(success && selectedRole == 3) {				// If log in succeeds and role number is 3 (aka Reviewer)
+					
+					 AuthorMenu nw = AuthorMenu.getInstance();	// Creates new Window
+					 nw.pack();									// Causes subcomponents of this JInternalFrameto be laid out at their preferred size.
+					 getDesktopPane().add(nw);					// Adds Instance of frame to DesktopPane on StartingFrame
+					 nw.setVisible(true);						// Sets Instance frame visible
+					 
+					 try {
+					     nw.setMaximum(true);				// Sets window to max size of DesktopPane
+					 } catch (Exception e1) {
+						 System.out.println(e1);
+					 }
+					 
+					 getDesktopPane().repaint();			// Repaints the DesktopPane
+					 getDesktopPane().remove(myInstance);	// Removes the instance of current Class
+					 myInstance = null;						// Sets instance to null
 				}
+				
 				else if(success && selectedRole == 2) {				// If log in succeeds and role number is 2 (aka Author)
-					contentPane.setVisible(false);
-					dispose(); 						//Closes window after opening
-					ReviewerMenu reviewer = new ReviewerMenu();
-					reviewer.setVisible(true);
+
+					 ReviewerMenu nw = ReviewerMenu.getInstance();	// Creates new Window
+					 nw.pack();									// Causes subcomponents of this JInternalFrameto be laid out at their preferred size.
+					 getDesktopPane().add(nw);					// Adds Instance of frame to DesktopPane on StartingFrame
+					 nw.setVisible(true);						// Sets Instance frame visible
+					 
+					 try {
+					     nw.setMaximum(true);				// Sets window to max size of DesktopPane
+					 } catch (Exception e1) {
+						 System.out.println(e1);
+					 }
+					 
+					 getDesktopPane().repaint();			// Repaints the DesktopPane
+					 getDesktopPane().remove(myInstance);	// Removes the instance of current Class
+					 myInstance = null;						// Sets instance to null
 				}
+				
 				else if(success && selectedRole == 1) {				// If log in succeeds and role number is 1 (aka Administrator)
-					contentPane.setVisible(false);
-					dispose(); 						//Closes window after opening
-					AdminMenu admin = new AdminMenu();
-					admin.setVisible(true);
+					
+					 AdminMenu nw = AdminMenu.getInstance();	// Creates new Window
+					 nw.pack();									// Causes subcomponents of this JInternalFrameto be laid out at their preferred size.
+					 getDesktopPane().add(nw);					// Adds Instance of frame to DesktopPane on StartingFrame
+					 nw.setVisible(true);						// Sets Instance frame visible
+					 
+					 try {
+					     nw.setMaximum(true);				// Sets window to max size of DesktopPane
+					 } catch (Exception e1) {
+						 System.out.println(e1);
+					 }
+					 
+					 getDesktopPane().repaint();			// Repaints the DesktopPane
+					 getDesktopPane().remove(myInstance);	// Removes the instance of current Class
+					 myInstance = null;						// Sets instance to null
 				}
 				
 			}
 		});
+	}
+	
+	/*
+	 * Get Instance Method | Returns Instance of class when called
+	 */
+	public static LogIn getInstance() {	
+	    if (myInstance == null) {			// If instance is null, create new instance
+	        myInstance = new LogIn();		// Set new instance
+	    }
+	    return myInstance;					// Return instance
 	}
 }

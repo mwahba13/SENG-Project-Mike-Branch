@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import iteration1.models.Upload;
 
@@ -20,6 +21,7 @@ public class UploadRepository {
 	
 		PreparedStatement autoinc = conn.prepareStatement("SELECT last_insert_rowid()");
 		ResultSet result = autoinc.executeQuery();
+		System.out.println("addUpload result.getint(1): " + result.getInt(1));
 		Upload upload = new Upload(result.getInt(1), email, filepath, "Submitted");
 		
 		
@@ -36,6 +38,24 @@ public class UploadRepository {
 		
 		String query = "SELECT * FROM UPLOADS WHERE email = ?";
 		PreparedStatement stmt = conn.prepareStatement(query);
+		ResultSet result = stmt.executeQuery();
+		
+		while(result.next()) {
+			uploads.add(new Upload(result.getInt(1), result.getString(2), result.getString(3), result.getString(4)));
+		}
+		
+		stmt.close();
+		result.close();
+		return uploads;
+	}
+	
+	// FOR VIEWING THE UPLOADERS INFO FROM PAPER ID
+	public static ArrayList<Upload> getUploadsByID(Connection conn, Integer inputID) throws SQLException {
+		ArrayList<Upload> uploads = new ArrayList<>();
+		
+		String query = "SELECT * FROM UPLOADS WHERE id = ?";
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setLong(1, inputID);
 		ResultSet result = stmt.executeQuery();
 		
 		while(result.next()) {
